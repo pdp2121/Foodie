@@ -12,7 +12,7 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, url_for
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -29,7 +29,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://zy2431:123123@34.73.36.248/project1"
 #
-DATABASEURI = "postgresql://user:password@34.73.36.248/project1" # Modify this with your own credentials you received from Joseph!
+DATABASEURI = "postgresql://pdp2121:phusally@34.73.36.248/project1" # Modify this with your own credentials you received from Joseph!
 
 
 #
@@ -108,7 +108,7 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
+  cursor = g.conn.execute("SELECT * FROM restaurant")
   names = []
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
@@ -157,9 +157,25 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("another.html")
+@app.route('/reslist/<rid>')
+def reslist(rid):
+  cursor = g.conn.execute('SELECT * FROM restaurant WHERE restaurant_id = %s', rid)
+  res = []
+  for result in cursor:
+    res.append(result)
+  cursor.close()
+  context= dict(rdata = res)
+  return render_template("reslist.html", **context)
+
+@app.route('/menu/<rid>')
+def getmenu(rid):
+  cursor = g.conn.execute('SELECT * FROM menu m INNER JOIN res_menu rm ON rm.restaurant_id = %s AND m.menu_id = rm.menu_id', rid)
+  res = []
+  for result in cursor:
+    res.append(result)
+  cursor.close()
+  context= dict(rdata = res)
+  return render_template("menu.html", **context)
 
 
 # Example of adding new data to the database
@@ -168,6 +184,12 @@ def add():
   name = request.form['name']
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
+
+@app.route('/search', methods=['POST'])
+def search():
+  rid = request.form['rid']
+  return redirect(url_for('reslist',rid=rid))
+
 
 
 @app.route('/login')
