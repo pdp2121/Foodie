@@ -33,6 +33,9 @@
   <b><font size="+2">Reviews:</font></b>
   {% for n in rvdata %}
   <div><p><b>{{n["name"]}}</b> Ratings: {{n["rating"]}} <i> on {{n["timestamp"]}}</i></p></div>
+  {% if n["mcontent"] %}
+  <p>mentioned this review: <i>&ldquo;{{n["mcontent"]}}&rdquo;</i></p>
+  {% endif %}
   <div><p>{{n["content"]}}</p></div>
   {% endfor %}
 

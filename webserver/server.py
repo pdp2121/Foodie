@@ -208,9 +208,12 @@ def getmenu(rid):
   res3 =[]
   for result in cursor:
     res3.append(result)
-  cursor = g.conn.execute("""SELECT u.name, rv.* FROM write_review rw
+  cursor = g.conn.execute("""SELECT u.name, rv.*, t.content AS mcontent FROM write_review rw
   INNER JOIN users u ON rw.user_id = u.user_id AND rw.restaurant_id = %s
-  INNER JOIN review rv ON rw.review_id = rv.review_id""", rid)
+  INNER JOIN review rv ON rw.review_id = rv.review_id
+  LEFT JOIN mention m ON m.source_id = rv.review_id
+  LEFT JOIN (SELECT * FROM review) t
+  ON m.dest_id = t.review_id""", rid)
   res4 = []
   for result in cursor:
     res4.append(result)
