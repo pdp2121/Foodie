@@ -157,9 +157,14 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/reslist/<rid>')
-def reslist(rid):
-  cursor = g.conn.execute('SELECT * FROM restaurant WHERE restaurant_id = %s', rid)
+@app.route('/reslist')
+def reslist():
+  rid = request.args.get('rid')
+  country = request.args.get('country')
+  if rid:
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE restaurant_id = %s', rid)
+  if country:
+    cursor = g.conn.execute('SELECT * FROM restaurant r INNER JOIN cuisine c ON r.cuisine_id = c.cuisine_id AND country = %s', country)
   res = []
   for result in cursor:
     res.append(result)
@@ -188,9 +193,12 @@ def add():
 @app.route('/search', methods=['POST'])
 def search():
   rid = request.form['rid']
-  return redirect(url_for('reslist',rid=rid))
+  return redirect(url_for('reslist',rid=rid, country=""))
 
-
+@app.route('/searchcountry', methods=['POST'])
+def search_country():
+  country = request.form['country']
+  return redirect(url_for('reslist',rid="",country=country))
 
 @app.route('/login')
 def login():

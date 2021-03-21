@@ -10,7 +10,9 @@
 <div>
     {% for n in rdata %}
     <div><p><a href="/menu/{{n['restaurant_id']}}" >
-      {{n["name"]}}</a>, {{n["city"]}}</p></div>
+      {{n["name"]}}</a>, Ratings: {{n["ratings"]}}</p></div>
+    <div><p>{{n["street_address"]}}, {{n["city"]}}, {{n["state"]}} {{n["zip_code"]}} </p></div>
+    <div><p>Tel: {{n["phone_number"]}} Website: {{n["website"]}}</p></div>
     {% endfor %}
   </div>
   <p><a href="/">Go to the main page</a></p>
