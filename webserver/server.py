@@ -158,7 +158,7 @@ def index():
 
   return render_template("index.html", logged_in = logged_in, uid = uid, uname = uname)
 
-#
+# test
 # This is an example of a different path.  You can see it at:
 # 
 #     localhost:8111/another
