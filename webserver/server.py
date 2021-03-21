@@ -16,7 +16,7 @@ from flask import Flask, request, render_template, g, redirect, Response, url_fo
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-
+#hello
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -227,8 +227,20 @@ def search_keyword():
 
 @app.route('/login')
 def login():
-    abort(401)
-    this_is_never_executed()
+    if request.method == 'POST':
+      uid = request.form['uid']
+      cursor = g.conn.execute('SELECT COUNT (*) AS count FROM users WHERE user_id = %s', uid)
+      count = -1
+      error = None
+      for result in cursor:
+        count = result["count"]
+      if count == 0:
+        error = "Invalid Credentials. Please try again."
+      else:
+        return redirect('/')
+      return render_template('login.html', error=error)
+    elif request.method == 'GET':
+      return render_template("login.html")
 
 
 if __name__ == "__main__":
