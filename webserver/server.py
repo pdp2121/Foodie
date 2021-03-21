@@ -225,7 +225,7 @@ def search_keyword():
   return redirect(url_for('reslist',rid="",keyword = keyword))
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
       uid = request.form['uid']
