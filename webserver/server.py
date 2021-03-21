@@ -262,7 +262,7 @@ def search_keyword():
   return redirect(url_for('reslist',rid="",keyword = keyword))
 
 
-@app.route('/login')
+@app.route('/login', methods = ['POST', 'GET'])
 def login():
     if request.method == 'POST':
       global uid
@@ -288,13 +288,20 @@ def login():
 
 @app.route('/userpage')
 def userpage():
-  cursor = g.conn.execute('SELECT * FROM users WHERE user_id= %s', uid)
+  global uid
+  cursor = g.conn.execute("""SELECT u.status, u.email, r.restaurant_id, r.name FROM users u 
+  INNER JOIN favorite f ON u.user_id = f.user_id AND u.user_id= %s
+   INNER JOIN restaurant r ON f.restaurant_id = r.restaurant_id""", uid)
   res = []
+  status = ""
+  email = ""
   for result in cursor:
     res.append(result)
+    status = result["status"]
+    email = result["email"]
   cursor.close()
-  context= dict(rdata = res)
-  return render_template("userpage.html", **context)
+  context= dict(udata = res)
+  return render_template("userpage.html", **context, uid = uid, uname = uname, status= status, email=email)
 
 @app.route('/logout')
 def logout():
