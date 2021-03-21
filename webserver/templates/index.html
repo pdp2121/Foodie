@@ -9,7 +9,13 @@
 
 <body>
   <h1>Foodie</h1>
+  {% if logged_in %}
+  <p>Welcome {{uname}}</p>
+  <p><a href = "userpage">My account</a></p>
+  <p><a href = "logout">Logout</a></p>
+  {% else %}
   <p><a href="login">Login</a></p>
+  {% endif %}
 
 <form method="POST" action="/search">
   <p>Search for restaurant: <input type="text" name="resname"> <input type="submit" value="Search"></p>

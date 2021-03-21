@@ -13,6 +13,11 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, url_for
+logged_in = False
+uname = ""
+uid = -1
+
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -102,17 +107,17 @@ def index():
   """
 
   # DEBUG: this is debugging code to see what request looks like
-  print(request.args)
+  #print(request.args)
 
 
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT * FROM restaurant")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+  #cursor = g.conn.execute("SELECT * FROM restaurant")
+  # names = []
+  # for result in cursor:
+  #   names.append(result['name'])  # can also be accessed using result[0]
+  # cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -140,14 +145,18 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  #context = dict(data = names)
 
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  print("Logged in: " + str(logged_in))
+  print("uid: " + str(uid))
+  print("uname: " + str(uname))
+
+  return render_template("index.html", logged_in = logged_in, uid = uid, uname = uname)
 
 #
 # This is an example of a different path.  You can see it at:
@@ -248,8 +257,45 @@ def search_keyword():
 
 @app.route('/login')
 def login():
-    abort(401)
-    this_is_never_executed()
+    if request.method == 'POST':
+      global uid
+      uid = request.form['uid']
+      cursor = g.conn.execute('SELECT COUNT (*) AS count, name FROM users WHERE user_id = %s GROUP BY name', uid)
+      count = -1
+      error = None
+      global uname
+      for result in cursor:
+        count = result["count"]
+        print("count: " + str(count))
+        uname = result["name"]
+      if count <= 0:
+        error = "Invalid Credentials. Please try again."
+      else:
+        global logged_in
+        logged_in = True
+        print(logged_in)
+        return redirect('/')
+      return render_template('login.html', error=error)
+    elif request.method == 'GET':
+      return render_template("login.html")
+
+@app.route('/userpage')
+def userpage():
+  cursor = g.conn.execute('SELECT * FROM users WHERE user_id= %s', uid)
+  res = []
+  for result in cursor:
+    res.append(result)
+  cursor.close()
+  context= dict(rdata = res)
+  return render_template("userpage.html", **context)
+
+@app.route('/logout')
+def logout():
+  global logged_in, uid, uname
+  logged_in = False
+  uid = -1
+  uname = ""
+  return redirect('/')
 
 
 if __name__ == "__main__":

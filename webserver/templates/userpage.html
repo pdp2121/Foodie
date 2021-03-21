@@ -1,0 +1,18 @@
+<html>
+    <style>
+        body{ 
+          font-size: 15pt;
+          font-family: arial;
+        }
+      </style>
+<body>
+<h1>My page</h1>
+{% for n in rdata %}
+<div><p>Account name: {{n['name']}}</p></div>
+<div><p>Email: {{n['email']}}</p></div>
+<div><p>Status: {{n['status']}}</p></div>
+{% endfor %}
+
+  <p><a href="/">Go to the main page</a></p>
+</body>
+</html>
