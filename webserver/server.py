@@ -208,9 +208,16 @@ def getmenu(rid):
   res3 =[]
   for result in cursor:
     res3.append(result)
+  cursor = g.conn.execute("""SELECT u.name, rv.* FROM write_review rw
+  INNER JOIN users u ON rw.user_id = u.user_id AND rw.restaurant_id = %s
+  INNER JOIN review rv ON rw.review_id = rv.review_id""", rid)
+  res4 = []
+  for result in cursor:
+    res4.append(result)
+  context4 = dict(rvdata= res4)
   cursor.close()
   context3 = dict(sdata= res3)
-  return render_template("menu.html", **context,**context2,**context3)
+  return render_template("menu.html", **context,**context2,**context3,**context4)
   
   
 @app.route('/menu/type/<menuid>/<rid>')

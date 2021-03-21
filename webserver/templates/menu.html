@@ -28,6 +28,15 @@
     <div><b><a href= "/menu/type/{{n['menu_id']}}/{{n['restaurant_id']}}">{{n["course_type"]}}</a></b></p></div>
     {% endfor %}
   </div>
+
+<div>
+  <b><font size="+2">Reviews:</font></b>
+  {% for n in rvdata %}
+  <div><p><b>{{n["name"]}}</b> Ratings: {{n["rating"]}} <i> on {{n["timestamp"]}}</i></p></div>
+  <div><p>{{n["content"]}}</p></div>
+  {% endfor %}
+
+</div>
   <p><a href="/">Go to the main page</a></p>
 </body>
 </html>
