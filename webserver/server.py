@@ -183,6 +183,7 @@ def reslist():
     cursor = g.conn.execute('SELECT * FROM restaurant WHERE state = %s', state)
   if keyword:
     cursor = g.conn.execute('SELECT r.name, r.ratings FROM restaurant r INNER JOIN res_menu rm ON r.restaurant_id = rm.restaurant_id INNER JOIN menu m ON m.menu_id = rm.menu_id INNER JOIN menu_contain m ON mc.menu_id = m.menu_id INNER JOIN food f ON f.food_id = mc.food_id WHERE LOWER(f.name) LIKE "%s"', keyword)
+
   res = []
   for result in cursor:
     res.append(result)
@@ -201,9 +202,15 @@ def getmenu(rid):
   res2 =[]
   for result in cursor:
     res2.append(result)
-  cursor.close()
+
   context2 = dict(fdata= res2)
-  return render_template("menu.html", **context,**context2)
+  cursor = g.conn.execute('SELECT country, region, price_range, vegetarian from cuisine, restaurant where restaurant.restaurant_id = %s and cuisine.cuisine_id = restaurant.cuisine_id',rid)
+  res3 =[]
+  for result in cursor:
+    res3.append(result)
+  cursor.close()
+  context3 = dict(sdata= res3)
+  return render_template("menu.html", **context,**context2,**context3)
   
   
 @app.route('/menu/type/<menuid>/<rid>')

@@ -10,6 +10,15 @@
 <h1>Restaurant Menu : <b>{{f["name"]}}</b></h1>
     {% endfor %}
 <div>
+    {% for s in sdata %}
+    <div><p>Country: {{s["country"]}}</p></div> 
+    <div><p>Region: {{s["region"]}}</p></div> 
+    <div><p>Price Range: {{s["price_range"]}}</p></div> 
+    <div><p>Vegetarian: {{s["vegetarian"]}}</p></div>
+    {% endfor %}
+</div>
+
+<div>
     {% for n in rdata %}
     <div><b><font size="+2">Course Type: <u>{{n["meal_type"]}}</u></font></b></p></div>
     <div><b><a href= "/menu/type/{{n['menu_id']}}/{{n['restaurant_id']}}">{{n["course_type"]}}</a></b></p></div>
