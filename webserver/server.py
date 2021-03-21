@@ -159,12 +159,21 @@ def index():
 #
 @app.route('/reslist')
 def reslist():
-  rid = request.args.get('rid')
+  resname = request.args.get('resname')
   country = request.args.get('country')
-  if rid:
-    cursor = g.conn.execute('SELECT * FROM restaurant WHERE restaurant_id = %s', rid)
+  city = request.args.get('city')
+  state = request.args.get('state')
+  keyword = request.args.get('keyword')
+  if resname:
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE name= %s', resname)
   if country:
     cursor = g.conn.execute('SELECT * FROM restaurant r INNER JOIN cuisine c ON r.cuisine_id = c.cuisine_id AND country = %s', country)
+  if city:
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE city = %s', city)
+  if state:
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE state = %s', state)
+  if keyword:
+    cursor = g.conn.execute('SELECT r.name, r.ratings FROM restaurant r INNER JOIN res_menu rm ON r.restaurant_id = rm.restaurant_id INNER JOIN menu m ON m.menu_id = rm.menu_id INNER JOIN menu_contain m ON mc.menu_id = m.menu_id INNER JOIN food f ON f.food_id = mc.food_id WHERE LOWER(f.name) LIKE "%s"', keyword)
   res = []
   for result in cursor:
     res.append(result)
@@ -191,14 +200,30 @@ def add():
   return redirect('/')
 
 @app.route('/search', methods=['POST'])
-def search():
-  rid = request.form['rid']
-  return redirect(url_for('reslist',rid=rid, country=""))
+def search_name():
+  resname = request.form['resname']
+  return redirect(url_for('reslist',rid="", resname = resname))
 
 @app.route('/searchcountry', methods=['POST'])
 def search_country():
   country = request.form['country']
   return redirect(url_for('reslist',rid="",country=country))
+
+@app.route('/searchcity', methods=['POST'])
+def search_city():
+  city = request.form['city']
+  return redirect(url_for('reslist',rid="",city=city))
+
+@app.route('/searchstate', methods=['POST'])
+def search_state():
+  state = request.form['state']
+  return redirect(url_for('reslist',rid="",state = state))
+
+@app.route('/keyword', methods=['POST'])
+def search_keyword():
+  keyword = request.form['keyword']
+  return redirect(url_for('reslist',rid="",keyword = keyword))
+
 
 @app.route('/login')
 def login():

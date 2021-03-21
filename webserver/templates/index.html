@@ -8,23 +8,11 @@
 
 
 <body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
-
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-
-<p><a href="another">Go to the other page</a></p>
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
+  <h1>Foodie</h1>
 
 <form method="POST" action="/search">
-  <p>Search for restaurant by ID: <input type="text" name="rid"> <input type="submit" value="Search"></p>
+  <p>Search for restaurant: <input type="text" name="resname"> <input type="submit" value="Search"></p>
+
   </form>
 
 <form method="POST" action="/searchcountry">
@@ -32,5 +20,18 @@
     </form>
 </body>
 
+<form method="POST" action="/searchcity">
+  <p>Search for restaurant by restaurant city: <input type="text" name="city"> <input type="submit" value="Search"></p>
+  </form>
+</body>
 
+<form method="POST" action="/searchstate">
+  <p>Search for restaurant by restaurant state: <input type="text" name="state"> <input type="submit" value="Search"></p>
+  </form>
+</body>
+</html>
+<form method="POST" action="/keyword">
+  <p>Search by food: <input type="text" name="keyword"> <input type="submit" value="Search"></p>
+  </form>
+</body>
 </html>
