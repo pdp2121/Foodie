@@ -11,9 +11,13 @@
     {% endfor %}
 <div>
     {% for n in rdata %}
-    <div><b><font size="+2">Course Type: <u>{{n["meal_type"]}}</u></font></b></p></div>
-    <div><b><a href= "/menu/type/{{n['menu_id']}}/{{n['restaurant_id']}}">{{n["course_type"]}}</a></b></p></div>
+    <div><b>{{n["name"]}}</b></p></div>
+    <div>price: ${{n["price"]}}</p></div>
+    <div>spice level: {{n["spice_level"]}}/5</p></div>
+    <div>main ingredient: {{n["ingredients"]}}</p></div> 
+    <hr style="border-top: dotted 1px;" />
     {% endfor %}
+    <hr>
   </div>
   <p><a href="/">Go to the main page</a></p>
 </body>

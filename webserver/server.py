@@ -16,7 +16,7 @@ from flask import Flask, request, render_template, g, redirect, Response, url_fo
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-#hello
+
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -183,14 +183,35 @@ def reslist():
 
 @app.route('/menu/<rid>')
 def getmenu(rid):
-  cursor = g.conn.execute('SELECT * FROM menu m INNER JOIN res_menu rm ON rm.restaurant_id = %s AND m.menu_id = rm.menu_id', rid)
+  cursor = g.conn.execute('SELECT * FROM menu m, res_menu r WHERE r.restaurant_id = %s and m.menu_id = r.menu_id ', rid)
   res = []
   for result in cursor:
     res.append(result)
-  cursor.close()
   context= dict(rdata = res)
-  return render_template("menu.html", **context)
-
+  cursor = g.conn.execute('SELECT name from restaurant where restaurant_id = %s',rid)
+  res2 =[]
+  for result in cursor:
+    res2.append(result)
+  cursor.close()
+  context2 = dict(fdata= res2)
+  return render_template("menu.html", **context,**context2)
+  
+  
+@app.route('/menu/type/<menuid>/<rid>')
+def getfood(menuid,rid):
+  cursor = g.conn.execute('SELECT * from menu_contain c, food f where c.menu_id = %s and f.food_id = c.food_id', menuid)
+  res = []
+  for result in cursor:
+    res.append(result)
+  context= dict(rdata = res)
+  cursor = g.conn.execute('SELECT name from restaurant where restaurant_id = %s',rid)
+  res2 =[]
+  for result in cursor:
+    res2.append(result)
+  cursor.close()
+  context2 = dict(fdata= res2)
+  return render_template("food.html", **context,**context2)
+  
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -225,22 +246,10 @@ def search_keyword():
   return redirect(url_for('reslist',rid="",keyword = keyword))
 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login')
 def login():
-    if request.method == 'POST':
-      uid = request.form['uid']
-      cursor = g.conn.execute('SELECT COUNT (*) AS count FROM users WHERE user_id = %s', uid)
-      count = -1
-      error = None
-      for result in cursor:
-        count = result["count"]
-      if count == 0:
-        error = "Invalid Credentials. Please try again."
-      else:
-        return redirect('/')
-      return render_template('login.html', error=error)
-    elif request.method == 'GET':
-      return render_template("login.html")
+    abort(401)
+    this_is_never_executed()
 
 
 if __name__ == "__main__":
