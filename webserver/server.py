@@ -200,10 +200,22 @@ def search_country():
   country = request.form['country']
   return redirect(url_for('reslist',rid="",country=country))
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+    if request.method == 'POST':
+      uid = request.form['uid']
+      cursor = g.conn.execute('SELECT COUNT (*) AS count FROM users WHERE user_id = %s', uid)
+      count = -1
+      error = None
+      for result in cursor:
+        count = result["count"]
+      if count == 0:
+        error = "Invalid Credentials. Please try again."
+      else:
+        return redirect('/')
+      return render_template('login.html', error=error)
+    elif request.method == 'GET':
+      return render_template("login.html")
 
 
 if __name__ == "__main__":
