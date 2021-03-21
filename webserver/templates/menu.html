@@ -13,8 +13,12 @@
     {% for s in sdata %}
     <div><p>Country: {{s["country"]}}</p></div> 
     <div><p>Region: {{s["region"]}}</p></div> 
-    <div><p>Price Range: {{s["price_range"]}}</p></div> 
-    <div><p>Vegetarian: {{s["vegetarian"]}}</p></div>
+    <div><p>Price Range: {{s["price_range"]}}</p></div>
+    {% if s["vegetarian"] == 0%}
+    <div><p>Vegetarian: No</p></div>
+    {% else %}
+    <div><p>Vegetarian: Yes</p></div>
+    {% endif %}
     {% endfor %}
 </div>
 
