@@ -174,15 +174,20 @@ def reslist():
   state = request.args.get('state')
   keyword = request.args.get('keyword')
   if resname:
-    cursor = g.conn.execute('SELECT * FROM restaurant WHERE name= %s', resname)
+    resname = '%'+resname.lower()+'%'
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE LOWER(name) LIKE %s', resname)
   if country:
-    cursor = g.conn.execute('SELECT * FROM restaurant r INNER JOIN cuisine c ON r.cuisine_id = c.cuisine_id AND country = %s', country)
+    country = '%'+country.lower()+'%'
+    cursor = g.conn.execute('SELECT * FROM restaurant r INNER JOIN cuisine c ON r.cuisine_id = c.cuisine_id AND LOWER(country) LIKE %s', country)
   if city:
-    cursor = g.conn.execute('SELECT * FROM restaurant WHERE city = %s', city)
+    city = '%' + city.lower() + '%'
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE LOWER(city) LIKE %s', city)
   if state:
-    cursor = g.conn.execute('SELECT * FROM restaurant WHERE state = %s', state)
+    state = '%' + state.lower() + '%'
+    cursor = g.conn.execute('SELECT * FROM restaurant WHERE LOWER(state) LIKE  %s', state)
   if keyword:
-    cursor = g.conn.execute('SELECT r.name, r.ratings FROM restaurant r INNER JOIN res_menu rm ON r.restaurant_id = rm.restaurant_id INNER JOIN menu m ON m.menu_id = rm.menu_id INNER JOIN menu_contain m ON mc.menu_id = m.menu_id INNER JOIN food f ON f.food_id = mc.food_id WHERE LOWER(f.name) LIKE "%s"', keyword)
+    keyword = '%' + keyword.lower() + '%'
+    cursor = g.conn.execute('SELECT r.* FROM restaurant r INNER JOIN res_menu rm ON r.restaurant_id = rm.restaurant_id INNER JOIN menu m ON m.menu_id = rm.menu_id INNER JOIN menu_contain mc ON mc.menu_id = m.menu_id INNER JOIN food f ON f.food_id = mc.food_id WHERE LOWER(f.name) LIKE %s', keyword)
 
   res = []
   for result in cursor:
